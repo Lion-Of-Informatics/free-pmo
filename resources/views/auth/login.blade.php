@@ -6,7 +6,6 @@
 
 <div class="login-panel col-md-4 col-md-offset-4 text-center">
     {!! app_logo_image() !!}
-    <h3>{{ config('app.name') }}</h3>
     <div class="panel panel-default">
         <div class="panel-body">
         	{{ Form::open(['route' => 'auth.login']) }}
