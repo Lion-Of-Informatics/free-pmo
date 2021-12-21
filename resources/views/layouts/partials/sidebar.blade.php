@@ -11,7 +11,7 @@
     <div class="sidebar-nav navbar-collapse">
         <a class="navbar-brand text-center" title="Home | {{ Option::get('agency_tagline', 'Laravel app description') }}" href="{{ route('home') }}">
             {{ app_logo_image(['class' => 'sidebar-logo']) }}
-            <div class="small" style="margin-top:10px">{{ config('app.name') }}</div>
+            {{-- <div class="small" style="margin-top:10px">{{ config('app.name') }}</div> --}}
         </a>
         @include('layouts.partials.lang-switcher')
         <ul class="nav" id="side-menu">
