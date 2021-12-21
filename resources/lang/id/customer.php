@@ -12,6 +12,7 @@ return [
     'back_to_show'  => 'Kembali ke detail Customer',
     'back_to_index' => 'Kembali ke daftar Customer',
     'contact'       => 'Kontak Customer',
+    'user'          => 'Pengguna User',
 
     // Actions
     'create'         => 'Input Customer Baru',

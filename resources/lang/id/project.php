@@ -82,4 +82,7 @@ return [
     'closed'   => 'Lunas',
     'canceled' => 'Batal',
     'on_hold'  => 'Ditunda',
+
+    // Owners
+    'owners'    => 'Pemilik'
 ];

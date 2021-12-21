@@ -32,7 +32,7 @@ abstract class BaseRepository extends EloquentRepository
      */
     public function getWorkersList()
     {
-        return User::orderBy('name')->pluck('name', 'id');
+        return User::join('user_roles', 'users.id', '=', 'user_roles.user_id')->where('user_roles.role_id', 2)->orderBy('name')->pluck('users.name', 'users.id');
     }
 
     /**

@@ -17,7 +17,9 @@ class CommentsController extends Controller
      */
     public function index(Project $project)
     {
-        $this->authorize('view-comments', $project);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('view-comments', $project);
+        }
 
         $editableComment = null;
         $comments = $project->comments()->with('creator')->latest()->paginate();
@@ -38,7 +40,9 @@ class CommentsController extends Controller
      */
     public function store(Request $request, Project $project)
     {
-        $this->authorize('comment-on', $project);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('comment-on', $project);
+        }
 
         $newComment = $request->validate([
             'body' => 'required|string|max:255',
@@ -64,7 +68,9 @@ class CommentsController extends Controller
      */
     public function update(Request $request, Project $project, Comment $comment)
     {
-        $this->authorize('update', $comment);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('update', $comment);
+        }
 
         $commentData = $request->validate([
             'body' => 'required|string|max:255',
@@ -83,7 +89,9 @@ class CommentsController extends Controller
      */
     public function destroy(Project $project, Comment $comment)
     {
-        $this->authorize('delete', $comment);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('delete', $comment);
+        }
 
         request()->validate([
             'comment_id' => 'required|exists:comments,id',

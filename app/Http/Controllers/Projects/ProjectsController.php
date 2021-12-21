@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Projects;
 
+use App\CustomerHasUser;
 use App\Entities\Projects\Project;
 use App\Entities\Projects\ProjectsRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\CreateRequest;
 use App\Http\Requests\Projects\UpdateRequest;
+use App\ProjectHasUser;
 use Illuminate\Http\Request;
+use ProjectStatus;
 
 /**
  * Projects Controller.
@@ -42,7 +45,24 @@ class ProjectsController extends Controller
             $status = $this->repo->getStatusName($statusId);
         }
 
-        $projects = $this->repo->getProjects($request->get('q'), $statusId, auth()->user());
+        if( !auth()->user()->hasRole('client') ) {
+            $projects = $this->repo->getProjects($request->get('q'), $statusId, auth()->user());
+        } else {
+            $q = $request->get('q');
+            $statusIds = array_keys(ProjectStatus::toArray());
+
+            $projects = Project::select('projects.*')
+                                        ->rightJoin('project_has_users', 'project_has_users.project_id', '=', 'projects.id')
+                                        ->where('user_id', auth()->user()->id)
+                                        ->where(function ($query) use ($q, $statusId, $statusIds) {
+                                            $query->where('name', 'like', '%'.$q.'%');
+                            
+                                            if ($statusId && in_array($statusId, $statusIds)) {
+                                                $query->where('status_id', $statusId);
+                                            }
+                                        })
+                                        ->paginate(5);
+        }
 
         return view('projects.index', compact('projects', 'status', 'statusId'));
     }
@@ -85,8 +105,9 @@ class ProjectsController extends Controller
      */
     public function show(Project $project)
     {
-        $this->authorize('view', $project);
-
+        if( !auth()->user()->hasRole('client')) {
+            $this->authorize('view', $project);
+        }
         return view('projects.show', compact('project'));
     }
 
@@ -101,8 +122,9 @@ class ProjectsController extends Controller
         $this->authorize('update', $project);
 
         $customers = $this->repo->getCustomersList();
+        $customer_has_users = CustomerHasUser::where('customer_id', $project->customer_id)->get();
 
-        return view('projects.edit', compact('project', 'customers'));
+        return view('projects.edit', compact('project', 'customers', 'customer_has_users'));
     }
 
     /**
@@ -112,11 +134,37 @@ class ProjectsController extends Controller
      * @param  \App\Entities\Projects\Project  $project
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Project $project)
+    public function update(Request $request, Project $project)
     {
         $this->authorize('update', $project);
+        
+        $project->update([
+            'name'  => $request->name,
+            'description'   => $request->description,
+            'proposal_date' => $request->proposal_date,
+            'start_date'    => $request->start_date,
+            'end_date'    => $request->end_date,
+            'due_date'    => $request->due_date,
+            'project_value' => $request->project_value,
+            'proposal_value' => $request->proposal_value,
+            'status_id' => $request->status_id,
+            'customer_id'   => $request->customer_id,
+            'development_url' => $request->development_url,
+            'production_url' => $request->production_url
+        ]);
 
-        $project = $this->repo->update($request->validated(), $project->id);
+
+        ProjectHasUser::where('project_id', $project->id)->delete();
+
+        if( isset($request->project_owners) ) {
+            foreach( $request->project_owners as $user_id ) {
+                ProjectHasUser::create([
+                    'project_id'    => $project->id,
+                    'user_id'       => $user_id
+                ]);
+            }
+        }
+
         flash(trans('project.updated'), 'success');
 
         return redirect()->route('projects.edit', $project);
@@ -163,7 +211,9 @@ class ProjectsController extends Controller
      */
     public function subscriptions(Project $project)
     {
-        $this->authorize('view-subscriptions', $project);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('view-subscriptions', $project);
+        }
 
         return view('projects.subscriptions', compact('project'));
     }
@@ -176,7 +226,9 @@ class ProjectsController extends Controller
      */
     public function payments(Project $project)
     {
-        $this->authorize('view-payments', $project);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('view-payments', $project);
+        }
 
         $project->load('payments.partner');
 

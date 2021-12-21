@@ -34,6 +34,7 @@
             @endcan
             <th class="text-center">{{ trans('app.status') }}</th>
             <th>{{ trans('project.customer') }}</th>
+            <th>Owner</th>
             <th>{{ trans('app.action') }}</th>
         </thead>
         <tbody>
@@ -53,8 +54,15 @@
                 <td class="text-center">{{ $project->present()->status }}</td>
                 <td>{{ $project->customer->name }}</td>
                 <td>
+                    @foreach ($project->project_has_owners as $key => $project_has_owner)
+                        {{ $project_has_owner->user->name }} {{ $key != count($project->project_has_owners) - 1 ? ', ' : '' }}
+                    @endforeach
+                </td>
+                <td>
                     {!! html_link_to_route('projects.show', '', [$project->id], ['icon' => 'search', 'class' => 'btn btn-info btn-xs', 'title' => trans('app.show')]) !!}
+                    @if( !auth()->user()->hasRole('client') )
                     {!! html_link_to_route('projects.edit', '', [$project->id], ['icon' => 'edit', 'class' => 'btn btn-warning btn-xs', 'title' => trans('app.edit')]) !!}
+                    @endif
                 </td>
             </tr>
             @empty

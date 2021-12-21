@@ -2,6 +2,7 @@
 
 namespace App\Entities\Partners;
 
+use App\CustomerHasUser;
 use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
@@ -21,6 +22,16 @@ class Customer extends Model
     public function projects()
     {
         return $this->hasMany('App\Entities\Projects\Project');
+    }
+
+    /**
+     * Customer has many customer_users
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function customer_users()
+    {
+        return $this->hasMany('App\CustomerHasUser');
     }
 
     /**
@@ -88,5 +99,17 @@ class Customer extends Model
         $color = $this->is_active == 1 ? ' style="background-color: #337ab7"' : '';
 
         return '<span class="badge"'.$color.'>'.$this->status.'</span>';
+    }
+
+    /**
+     * Get is customer has user by user_id
+     *
+     * @param integer (user_id)
+     * 
+     * @return boolean
+     */
+    public function hasUserByUserId($user_id) 
+    {
+        return CustomerHasUser::where('user_id', $user_id)->where('customer_id', $this->id)->exists();
     }
 }

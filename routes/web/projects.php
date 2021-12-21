@@ -26,6 +26,11 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Projects'], function () 
     Route::get('projects/{project}/invoices', ['as' => 'projects.invoices', 'uses' => 'InvoicesController@index']);
 
     /*
+    * Project Owner Routes
+    */
+    Route::get('projects/{project}/owners', ['as' => 'projects.owners', 'uses' => 'OwnerController@index']);
+
+    /*
      * Project Activities Routes
      */
     Route::get('projects/{project}/activities', ['as' => 'projects.activities.index', 'uses' => 'ActivityController@index']);

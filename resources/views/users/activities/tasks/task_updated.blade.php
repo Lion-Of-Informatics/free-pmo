@@ -5,7 +5,7 @@
 @slot('body')
     <p>
         {!! __('activity.'.$activity->object_type.'.'.$activity->type, [
-            'user' => $activity->user->name,
+            'user' => auth()->user()->hasRole('client') ? 'programmer ' . '#' . $activity->user->id : $activity->user->name,
             'name' => $activity->object->name,
         ]) !!}
     </p>

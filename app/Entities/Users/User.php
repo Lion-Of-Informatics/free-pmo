@@ -2,6 +2,7 @@
 
 namespace App\Entities\Users;
 
+use App\ProjectHasUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -88,6 +89,11 @@ class User extends Authenticatable
         return $this->roles->contains('role_id', $roleId);
     }
 
+    public function hasProject(string $projectId)
+    {
+        return ProjectHasUser::where('project_id', $projectId)->where('user_id', $this->id)->exists();
+    }
+
     /**
      * Determine if the user has the given array of role.
      *
@@ -137,7 +143,7 @@ class User extends Authenticatable
     {
         $roleList = '<ul>';
         foreach ($this->roles as $role) {
-            $roleList .= '<li>'.$role->name.'</li>';
+            $roleList .= '<li>'.$role->getRealNameAttribute().'</li>';
         }
         $roleList .= '</ul>';
 

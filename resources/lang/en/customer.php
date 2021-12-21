@@ -12,6 +12,7 @@ return [
     'back_to_show'  => 'Back to Customer Detail',
     'back_to_index' => 'Back to Customer List',
     'contact'       => 'Customer Contact',
+    'user'          => 'Customer User',
 
     // Actions
     'create'         => 'Create new Customer',

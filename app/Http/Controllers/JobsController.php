@@ -63,7 +63,9 @@ class JobsController extends Controller
      */
     public function show(Request $request, Job $job)
     {
-        $this->authorize('view', $job);
+        if( !auth()->user()->hasRole('client') ) {
+            $this->authorize('view', $job);
+        }
 
         $editableTask = null;
         $editableComment = null;

@@ -26,6 +26,13 @@
                             <div class="col-xs-6">{!! FormField::radios('is_active', [__('app.in_active'), __('app.active')]) !!}</div>
                         </div>
                         {!! FormField::textarea('notes') !!}
+
+                        <label for="customer_has_users">User</label>
+                        <select class="js-example-basic-multiple" style="width: 100%" name="customer_has_users[]" multiple="multiple">
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}" {{ $customer->hasUserByUserId($user->id) ? 'selected' : '' }}>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <legend>{{ __('customer.contact') }}</legend>
@@ -52,4 +59,17 @@
 </div>
 {!! Form::close() !!}
 @endif
+@endsection
+
+@section('ext_css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endsection
+
+@section('script')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+        });
+    </script>
 @endsection

@@ -37,6 +37,8 @@ class UpdateRequest extends Request
             'project_value'  => 'nullable|numeric',
             'customer_id'    => 'nullable|numeric',
             'status_id'      => 'required|numeric',
+            'development_url' => 'required|string|max:225',
+            'production_url'  => 'required|string|max:225'
         ];
     }
 }

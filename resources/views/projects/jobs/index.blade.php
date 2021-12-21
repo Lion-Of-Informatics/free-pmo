@@ -12,9 +12,11 @@
 @section('content-project')
 
 @if ($jobs->isEmpty())
-<p>{{ __('project.no_jobs') }},
-    {{ link_to_route('projects.jobs.create', __('job.create'), [$project]) }}.
-</p>
+@if (!auth()->user()->hasRole('client'))
+    <p>{{ __('project.no_jobs') }},
+        {{ link_to_route('projects.jobs.create', __('job.create'), [$project]) }}.
+    </p>
+@endif
 @else
 
 @foreach($jobs->groupBy('type_id') as $key => $groupedJobs)
@@ -88,12 +90,16 @@
                 @endcan
                 <td class="text-center">
                     {{ $job->updated_at->diffForHumans() }} <br>
-                    {{ __('job.worker') }} : {{ $job->worker->name }}
+                    {{ __('job.worker') }} :  {{ 'programmer ' . '#' . $job->worker->id }}
                 </td>
                 <td class="text-center">
-                    @can('view', $job)
-                    {!! html_link_to_route('jobs.show', '',[$job->id],['icon' => 'search', 'title' => __('job.show'), 'class' => 'btn btn-info btn-xs', 'id' => 'show-job-' . $job->id]) !!}
-                    @endcan
+                    @if( auth()->user()->hasRole('client') )
+                        {!! html_link_to_route('jobs.show', '',[$job->id],['icon' => 'search', 'title' => __('job.show'), 'class' => 'btn btn-info btn-xs', 'id' => 'show-job-' . $job->id]) !!}
+                    @else
+                        @can('view', $job)
+                        {!! html_link_to_route('jobs.show', '',[$job->id],['icon' => 'search', 'title' => __('job.show'), 'class' => 'btn btn-info btn-xs', 'id' => 'show-job-' . $job->id]) !!}
+                        @endcan
+                    @endif
                     @can('edit', $job)
                     {!! html_link_to_route('jobs.edit', '',[$job->id],['icon' => 'edit', 'title' => __('job.edit'), 'class' => 'btn btn-warning btn-xs']) !!}
                     @endcan

@@ -7,8 +7,10 @@
 
 <h1 class="page-header">
     <div class="pull-right">
-        {!! html_link_to_route('payments.create', trans('payment.create'), ['project_id' => $project, 'customer_id' => $project->customer_id], ['class' => 'btn btn-success', 'icon' => 'plus']) !!}
-        {!! html_link_to_route('projects.fees.create', trans('payment.create_fee'), $project, ['class' => 'btn btn-default', 'icon' => 'plus']) !!}
+        @if (!auth()->user()->hasRole('client'))
+            {!! html_link_to_route('payments.create', trans('payment.create'), ['project_id' => $project, 'customer_id' => $project->customer_id], ['class' => 'btn btn-success', 'icon' => 'plus']) !!}
+            {!! html_link_to_route('projects.fees.create', trans('payment.create_fee'), $project, ['class' => 'btn btn-default', 'icon' => 'plus']) !!}
+        @endif
     </div>
     {{ $project->name }} <small>{{ trans('project.payments') }}</small>
 </h1>

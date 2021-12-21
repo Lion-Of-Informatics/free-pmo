@@ -31,6 +31,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('customers/{customer}/payments', ['as' => 'customers.payments', 'uses' => 'Customers\PaymentsController@index']);
     Route::get('customers/{customer}/subscriptions', ['as' => 'customers.subscriptions', 'uses' => 'Customers\SubscriptionsController@index']);
     Route::get('customers/{customer}/invoices', ['as' => 'customers.invoices', 'uses' => 'Customers\InvoicesController@index']);
+    Route::get('customers/{customer}/users', ['as' => 'customers.users', 'uses' => 'Customers\UserController']);
     Route::resource('customers', 'Partners\CustomersController');
 
     /*

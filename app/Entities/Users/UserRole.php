@@ -48,4 +48,14 @@ class UserRole extends Model
     {
         return Role::getNameById($this->role_id);
     }
+
+    /**
+     * Real role name attribute.
+     *
+     * @return string
+     */
+    public function getRealNameAttribute()
+    {
+        return Role::getRealRoleNameById($this->role_id);
+    }
 }

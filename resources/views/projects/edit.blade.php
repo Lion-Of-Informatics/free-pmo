@@ -44,6 +44,26 @@
                         {!! FormField::select('customer_id', $customers, ['label' => __('project.customer')]) !!}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="project_owners" class="control-label">Project Owners</label>
+                        <select class="js-example-basic-multiple" id="project_owners" style="width: 100%" name="project_owners[]" multiple="multiple">
+                            @foreach ($customer_has_users as $customer_has_user)
+                                <option value="{{ $customer_has_user->user->id }}" {{ $customer_has_user->user->hasProject($project->id) ? 'selected' : '' }}>{{ $customer_has_user->user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="development_url" class="control-label">Staging URL</label>
+                        <input type="url" name="development_url" id="development_url" class="form-control" value="{{ $project->development_url }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="production_url" class="control-label">Production URL</label>
+                        <input type="url" name="production_url" id="production_url" class="form-control" value="{{ $project->production_url }}">
+                    </div>
+                </div>
             </div>
 
             <div class="panel-footer">
@@ -61,10 +81,12 @@
 
 @section('ext_css')
     {!! Html::style(url('assets/css/plugins/jquery.datetimepicker.css')) !!}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('ext_js')
     {!! Html::script(url('assets/js/plugins/jquery.datetimepicker.js')) !!}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
 
 @section('script')
@@ -77,5 +99,10 @@
         scrollInput: false
     });
 })();
+</script>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-multiple').select2();
+    });
 </script>
 @endsection

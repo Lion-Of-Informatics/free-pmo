@@ -8,7 +8,9 @@
 
 <h1 class="page-header">
     <div class="pull-right">
-        {!! link_to_route('subscriptions.create', __('subscription.create'), ['project_id' => $project->id, 'customer_id' => $project->customer_id], ['class'=>'btn btn-success']) !!}
+        @if (!auth()->user()->hasRole('client'))
+            {!! link_to_route('subscriptions.create', __('subscription.create'), ['project_id' => $project->id, 'customer_id' => $project->customer_id], ['class'=>'btn btn-success']) !!}
+        @endif
     </div>
     {{ $project->name }} <small>{{ __('project.subscriptions') }}</small>
 </h1>

@@ -17,6 +17,10 @@ use Laracasts\Presenter\PresentableTrait;
  */
 class Project extends Model
 {
+    protected $fillable = [
+        'name', 'description', 'proposal_date', 'start_date', 'end_date', 'due_date', 'project_value', 'proposal_value', 'status_id', 'customer_id', 'development_url', 'production_url', 'development_url'
+    ];
+
     use PresentableTrait;
     /**
      * The event map for the model.
@@ -141,6 +145,16 @@ class Project extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    /**
+     * Project has many project has user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function project_has_owners()
+    {
+        return $this->hasMany('App\ProjectHasUser');
     }
 
     /**

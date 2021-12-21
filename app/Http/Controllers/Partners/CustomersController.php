@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Partners;
 
+use App\CustomerHasUser;
 use App\Entities\Partners\Customer;
+use App\Entities\Users\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Partners\CustomerCreateRequest;
 use App\Http\Requests\Partners\CustomerUpdateRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CustomersController extends Controller
 {
@@ -30,7 +34,9 @@ class CustomersController extends Controller
      */
     public function create()
     {
-        return view('customers.create');
+        $users = User::join('user_roles', 'users.id', '=', 'user_roles.user_id')->where('role_id', 3)->get();
+
+        return view('customers.create', compact('users'));
     }
 
     /**
@@ -39,9 +45,43 @@ class CustomersController extends Controller
      * @param  \App\Http\Requests\Partners\CustomerCreateRequest  $customerCreateForm
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CustomerCreateRequest $customerCreateForm)
+    public function store(Request $request)
     {
-        Customer::create($customerCreateForm->validated());
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|max:60',
+            'email'   => 'nullable|email|unique:customers,email',
+            'phone'   => 'nullable|max:255',
+            'pic'     => 'nullable|max:255',
+            'address' => 'nullable|max:255',
+            'website' => 'nullable|url|max:255',
+            'notes'   => 'nullable|max:255',
+        ]);
+
+        if( $validator->fails() ) {
+            return back()->withErrors($validator)
+                        ->withInput();
+        }
+
+        $customer = Customer::create([
+            'name'  => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'pic'   => $request->pic,
+            'address'   => $request->address,
+            'website'   => $request->website,
+            'notes' => $request->notes,
+            'is_active' => true,
+        ]);
+
+        if( isset($request->customer_has_users) ) {
+            foreach( $request->customer_has_users as $user_id ) {
+                CustomerHasUser::create([
+                    'customer_id'   => $customer->id,
+                    'user_id'       => $user_id  
+                ]);
+            }
+        }
+
         flash(__('customer.created'), 'success');
 
         return redirect()->route('customers.index');
@@ -66,7 +106,12 @@ class CustomersController extends Controller
      */
     public function edit(Customer $customer)
     {
-        return view('customers.edit', compact('customer'));
+        $users = User::join('user_roles', 'users.id', '=', 'user_roles.user_id')->where('role_id', 3)->get();
+
+        return view('customers.edit', [
+            'customer'  => $customer,
+            'users'     => $users
+        ]);
     }
 
     /**
@@ -79,6 +124,17 @@ class CustomersController extends Controller
     public function update(CustomerUpdateRequest $customerUpdateForm, Customer $customer)
     {
         $customer->update($customerUpdateForm->validated());
+
+        CustomerHasUser::where('customer_id', $customer->id)->delete();
+        if( isset($customerUpdateForm->validated()['customer_has_users']) ) {
+            foreach( $customerUpdateForm->validated()['customer_has_users'] as $user_id ) {
+                CustomerHasUser::create([
+                    'customer_id'   => $customer->id,
+                    'user_id'       => $user_id  
+                ]);
+            }
+        }
+
         flash(__('customer.updated'), 'success');
 
         return redirect()->route('customers.show', $customer->id);

@@ -82,4 +82,7 @@ return [
     'closed'   => 'Closed',
     'canceled' => 'Canceled',
     'on_hold'  => 'On Hold',
+
+    // Owners
+    'owners'    => 'Owner'
 ];

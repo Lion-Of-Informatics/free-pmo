@@ -5,6 +5,7 @@ namespace App\Entities\Projects;
 use App\Entities\BaseRepository;
 use App\Entities\Partners\Customer;
 use App\Entities\Users\User;
+use App\ProjectHasUser;
 use DB;
 use ProjectStatus;
 
@@ -64,6 +65,15 @@ class ProjectsRepository extends BaseRepository
 
         $project = $this->storeArray($projectData);
         DB::commit();
+
+        if( isset($projectData['project_owners']) ) {
+            foreach( $projectData['project_owners'] as $user_id ) {
+                ProjectHasUser::create([
+                    'project_id'    => $project->id,
+                    'user_id'       => $user_id
+                ]);
+            }
+        }
 
         return $project;
     }

@@ -20,6 +20,22 @@
                         {{ $project->customer->nameLink() }}
                     </td>
                 </tr>
+                <tr>
+                    <td>Owner</td>
+                    <td>
+                        @foreach ($project->project_has_owners as $key => $project_owner)
+                            <a href="#">{{ $project_owner->user->name }}{{ $key != count($project->project_has_owners) - 1 ? ', ' : '' }}</a>
+                        @endforeach
+                    </td>
+                </tr>
+                <tr>
+                    <td>Development URL</td>
+                    <td><a href="{{ $project->development_url }}">{{ $project->development_url }}</a></td>
+                </tr>
+                <tr>
+                    <td>Production URL</td>
+                    <td><a href="{{ $project->production_url }}">{{ $project->production_url }}</a></td>
+                </tr>
             </tbody>
         </table>
     </div>

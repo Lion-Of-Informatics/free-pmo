@@ -34,6 +34,7 @@ class CustomerUpdateRequest extends FormRequest
             'website'   => 'nullable|url|max:255',
             'notes'     => 'nullable|max:255',
             'is_active' => 'required|boolean',
+            'customer_has_users' => 'nullable'
         ];
     }
 }

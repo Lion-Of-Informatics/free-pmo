@@ -17,6 +17,7 @@ class Role extends ReferenceAbstract
     protected static $lists = [
         1 => 'admin',
         2 => 'worker',
+        3 => 'client'
     ];
 
     /**
@@ -28,6 +29,17 @@ class Role extends ReferenceAbstract
     public static function getNameById($roleId)
     {
         return trans('user.roles.'.static::$lists[$roleId]);
+    }
+
+    /**
+     * Get real role name by id.
+     *
+     * @param  int  $singleId
+     * @return string
+     */
+    public static function getRealRoleNameById($roleId)
+    {
+        return static::$lists[$roleId];
     }
 
     /**
@@ -50,7 +62,7 @@ class Role extends ReferenceAbstract
     {
         $lists = [];
         foreach (static::$lists as $key => $value) {
-            $lists[$key] = trans('user.roles.'.$value);
+            $lists[$key] = $value;
         }
 
         return $lists;

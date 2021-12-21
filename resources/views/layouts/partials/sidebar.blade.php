@@ -16,7 +16,9 @@
         @include('layouts.partials.lang-switcher')
         <ul class="nav" id="side-menu">
             <li>{!! html_link_to_route('home', trans('nav_menu.dashboard'), [], ['icon' => 'dashboard']) !!}</li>
-            <li>{!! html_link_to_route('jobs.index', trans('job.on_progress').' <span class="badge pull-right">'.AdminDashboard::onProgressJobCount(auth()->user()).'</span>', [], ['icon' => 'tasks']) !!}</li>
+            @if( auth()->user()->hasRole('worker') || auth()->user()->hasRole('admin') )
+                <li>{!! html_link_to_route('jobs.index', trans('job.on_progress').' <span class="badge pull-right">'.AdminDashboard::onProgressJobCount(auth()->user()).'</span>', [], ['icon' => 'tasks']) !!}</li>
+            @endif
             @can('manage_agency')
             <li>
                 {!! html_link_to_route('projects.index', trans('project.projects').' <span class="fa arrow"></span>', [], ['icon' => 'table']) !!}

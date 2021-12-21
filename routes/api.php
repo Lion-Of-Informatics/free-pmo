@@ -1,5 +1,9 @@
 <?php
 
+Route::group(['prefix' => 'v1', 'namespace' => 'Api', 'as' => 'api.'], function () {
+    Route::get('customers/{customer_id}/users', 'CustomerController@getCustomerUsers');
+});
+
 Route::group(['prefix' => 'v1', 'namespace' => 'Api', 'as' => 'api.', 'middleware' => ['auth:api']], function () {
     require __DIR__.'/api/projects.php';
     /*
